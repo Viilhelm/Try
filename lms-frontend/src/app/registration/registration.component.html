@@ -1,7 +1,7 @@
 <div class="container col-md-6 offset-mid-3">
     <h3 class="text-center"> 
-        {{ isAdminMode ? 'Add User' : 'User Registration' }}</h3>
-    <form (ngSubmit) = "onSubmit()" autocomplete="off">
+        Add User</h3>
+    <form (ngSubmit) = "onSubmit()">
 
         <div class="form-group">
             <label style="margin-bottom: 10px"> Name </label>
@@ -18,11 +18,13 @@
             <input type="password" class="form-control" style="margin-bottom: 10px" id="password" [(ngModel)] = "user.password" name="password">
         </div>
 
-        <div class="form-group" *ngIf="isAdminMode">
+        <!--
+        <div class="form-group">
             <label style="margin-bottom: 10px"> Role (Admin, User) </label>
             <input type="text" class="form-control" style="margin-bottom: 10px" id="role" [(ngModel)] = "user.role[0].roleName" name="role">
         </div>
+        //-->
 
-        <button class="btn btn-success" type="submit"> Submit </button>
+        <button class="btn btn-success" type="button" (click)="onSubmit()">Submit</button>
     </form>
 </div>

@@ -1,8 +1,12 @@
 package com.ibizabroker.lms.configuration;
 
-import com.ibizabroker.lms.service.JwtService;
-import com.ibizabroker.lms.util.JwtUtil;
-import io.jsonwebtoken.ExpiredJwtException;
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,11 +15,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.ibizabroker.lms.service.JwtService;
+import com.ibizabroker.lms.util.JwtUtil;
+
+import io.jsonwebtoken.ExpiredJwtException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -30,6 +33,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String requestTokenHeader = request.getHeader("Authorization");
+        System.out.println("JwtRequestFilter: Authorization header = " + requestTokenHeader);
+
+        // 如果请求的 URI 是公开注册接口，则直接跳过 JWT 认证过滤
+        String requestURI = request.getRequestURI();
+        System.out.println("JwtRequestFilter: Request URI = " + requestURI);
+        
+        // 如果请求的 URI 是公开注册接口，则直接跳过 JWT 认证过滤
+        if (requestURI.equals("/register-user") || requestURI.equals("/register-user/")) {
+            System.out.println("JwtRequestFilter: Skipping JWT processing for register endpoint.");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String username = null;
         String jwtToken = null;
