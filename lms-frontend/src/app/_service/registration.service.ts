@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Users } from '../_model/users';
 
@@ -7,13 +7,12 @@ import { Users } from '../_model/users';
   providedIn: 'root'
 })
 export class RegistrationService {
+  
   private baseURL = "http://localhost:8080/register";
 
-  requestHeader = new HttpHeaders({ 'No-Auth': 'True' });
-
-  constructor(private http: HttpClient) { }
+  constructor(private httpClient: HttpClient) { }
 
   registerUser(user: Users): Observable<Object> {
-    return this.http.post(this.baseURL, user, { headers: this.requestHeader });
+    return this.httpClient.post(`${this.baseURL}`, user);
   }
 }

@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-
+@RequestMapping("/register")
 public class RegistrationController {
 
     @Autowired
@@ -21,23 +20,26 @@ public class RegistrationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-    // POST 方法用于实际的注册操作
-    @PostMapping("/register")
+    // POST 方法，用于注册用户
+    @PostMapping
     public ResponseEntity<?> registerUser(@RequestBody Users user) {
         // 检查用户名是否已存在
         if (usersRepository.findByUsername(user.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists!");
         }
-        // 对密码进行加密
+
+        // 对密码加密
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        // 设置默认角色，例如 "User"
+
+        // 默认角色为 "User"
         Role defaultRole = new Role();
         defaultRole.setRoleName("User");
         user.setRole(Collections.singleton(defaultRole));
+
         // 保存用户
         usersRepository.save(user);
-        return ResponseEntity.ok(user);
+
+        return ResponseEntity.ok("User registered successfully!");
     }
 }
